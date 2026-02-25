@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#111111" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="styles.css" />
+  <title>Family Prayer + Devotional</title>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">✝︎</div>
+      <div>
+        <div class="title">Family Prayer + Devotional</div>
+        <div class="subtitle" id="todayLine"></div>
+      </div>
+    </div>
+    <div class="top-actions">
+      <button class="btn secondary" id="btnExport" title="Export backup">Export</button>
+      <label class="btn secondary fileBtn" title="Import backup">
+        Import<input id="fileImport" type="file" accept="application/json" />
+      </label>
+    </div>
+  </header>
+
+  <main class="wrap">
+
+    <!-- FAMILY MEMBERS -->
+    <section class="card">
+      <div class="cardHead">
+        <h2>Family Members</h2>
+        <div class="muted">Track prayers, devotionals, and memory verses per person</div>
+      </div>
+
+      <div class="grid2">
+        <div class="field">
+          <label>Member Name</label>
+          <input id="memberName" type="text" placeholder="e.g., Rey" />
+        </div>
+        <div class="field">
+          <label>Role (optional)</label>
+          <input id="memberRole" type="text" placeholder="Dad / Mom / Hannah / Anne" />
+        </div>
+      </div>
+
+      <div class="row">
+        <button class="btn" id="btnAddMember" type="button">Add Member</button>
+        <button class="btn danger" id="btnResetAll" type="button" title="Clears all app data">Reset All</button>
+      </div>
+
+      <div class="memberList" id="memberList"></div>
+      <div class="hint">Tip: Add all 4 names once. The app saves automatically on this device.</div>
+    </section>
+
+    <!-- TODAY'S DEVOTIONAL -->
+    <section class="card">
+      <div class="cardHead">
+        <h2>Today’s Devotional</h2>
+        <div class="muted">Write a short passage + reflection</div>
+      </div>
+
+      <div class="grid2">
+        <div class="field">
+          <label>Scripture Reference</label>
+          <input id="devRef" type="text" placeholder="e.g., Psalm 23:1" />
+        </div>
+        <div class="field">
+          <label>Theme (optional)</label>
+          <input id="devTheme" type="text" placeholder="e.g., Trust" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Verse Text (paste NIV text if you want it included)</label>
+        <textarea id="devVerse" placeholder="Paste verse text here..."></textarea>
+      </div>
+
+      <div class="field">
+        <label>Reflection / Lesson (short)</label>
+        <textarea id="devReflection" placeholder="What is God teaching our family today?"></textarea>
+      </div>
+
+      <!-- DAILY MEMORY VERSE -->
+      <div class="divider"></div>
+      <div class="cardHead">
+        <h3>Daily Memory Verse</h3>
+        <div class="muted">Short verse to memorize today</div>
+      </div>
+
+      <div class="grid2">
+        <div class="field">
+          <label>Memory Verse Reference</label>
+          <input id="mvDailyRef" type="text" placeholder="e.g., Psalm 119:105" />
+        </div>
+        <div class="field">
+          <label>Focus (optional)</label>
+          <input id="mvDailyFocus" type="text" placeholder="e.g., Guidance" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Memory Verse Text</label>
+        <textarea id="mvDailyText" placeholder="Type or paste the memory verse..."></textarea>
+      </div>
+
+      <div class="row">
+        <button class="btn" id="btnSaveDev" type="button">Save Today’s Devotional</button>
+        <button class="btn secondary" id="btnClearDev" type="button">Clear</button>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- MARK COMPLETED -->
+      <div class="cardHead">
+        <h3>Mark Completed (Today)</h3>
+        <div class="muted">Tap each person after they finish devotional + prayer</div>
+      </div>
+      <div class="memberChecks" id="memberChecks"></div>
+      <div class="hint">Streak builds when a member completes daily.</div>
+
+      <div class="divider"></div>
+
+      <!-- DAILY MEMORY VERSE MEMORIZED -->
+      <div class="cardHead">
+        <h3>Daily Memory Verse (Memorized)</h3>
+        <div class="muted">Tap each person when they memorized today’s verse</div>
+      </div>
+      <div class="memberChecks" id="dailyMemChecks"></div>
+    </section>
+
+    <!-- WEEKLY MEMORY VERSE -->
+    <section class="card">
+      <div class="cardHead">
+        <h2>Weekly Memory Verse</h2>
+        <div class="muted">One verse for the whole week (best for family discipleship)</div>
+      </div>
+
+      <div class="hint" id="weekLine"></div>
+
+      <div class="grid2">
+        <div class="field">
+          <label>Weekly Verse Reference</label>
+          <input id="mvWeekRef" type="text" placeholder="e.g., Joshua 1:9" />
+        </div>
+        <div class="field">
+          <label>Theme (optional)</label>
+          <input id="mvWeekTheme" type="text" placeholder="e.g., Courage" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Weekly Verse Text</label>
+        <textarea id="mvWeekText" placeholder="Type or paste the weekly memory verse..."></textarea>
+      </div>
+
+      <div class="row">
+        <button class="btn" id="btnSaveWeekVerse" type="button">Save Weekly Verse</button>
+        <button class="btn secondary" id="btnClearWeekVerse" type="button">Clear</button>
+        <button class="btn secondary" id="btnResetWeeklyChecks" type="button" title="Clears memorized checks for this week only">Reset Weekly Memorized</button>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="cardHead">
+        <h3>Weekly Memory Verse (Memorized)</h3>
+        <div class="muted">Tap each person when they memorized the weekly verse</div>
+      </div>
+      <div class="memberChecks" id="weeklyMemChecks"></div>
+    </section>
+
+    <!-- PRAYER LIST -->
+    <section class="card">
+      <div class="cardHead">
+        <h2>Prayer List</h2>
+        <div class="muted">Family prayer requests + answers</div>
+      </div>
+
+      <div class="grid2">
+        <div class="field">
+          <label>Request Title</label>
+          <input id="prTitle" type="text" placeholder="e.g., Healing for..." />
+        </div>
+        <div class="field">
+          <label>Assigned To (optional)</label>
+          <select id="prAssigned"></select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Details</label>
+        <textarea id="prDetails" placeholder="Write the request details..."></textarea>
+      </div>
+
+      <div class="row">
+        <button type="button" class="btn" id="btnAddPrayer">Add Prayer</button>
+        <button type="button" class="btn secondary" id="btnWeeklyReset">New Week (Optional)</button>
+      </div>
+
+      <div class="prayerList" id="prayerList"></div>
+      <div class="hint">Mark “Answered” when God answers, and write a note for testimony.</div>
+    </section>
+
+    <!-- HISTORY -->
+    <section class="card">
+      <div class="cardHead">
+        <h2>History</h2>
+        <div class="muted">Saved devotionals by date</div>
+      </div>
+      <div class="history" id="history"></div>
+    </section>
+
+    <footer class="footer">
+      <div>Offline-ready family tracker • Saved on this device</div>
+      <div class="muted">Export regularly if you want the same data on all devices.</div>
+    </footer>
+  </main>
+
+  <script type="module" src="app.js"></script>
+
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("./sw.js").catch(()=>{});
+    }
+  </script>
+</body>
+</html>
