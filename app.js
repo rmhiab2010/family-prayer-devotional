@@ -582,18 +582,36 @@ function setStorageForUser(uid) {
 }
 
 // Hide/show the app content (so you can require login)
+
 function setAppLocked(isLocked) {
-  // hide everything except the auth box
   const authBox = document.getElementById("authBox");
   const main = document.querySelector("main") || document.body;
+
+  const loginBtn = document.getElementById("btnLogin");
+  const createBtn = document.getElementById("btnCreate");
+  const logoutBtn = document.getElementById("btnLogout");
+  const emailEl = document.getElementById("authEmail");
+  const passEl = document.getElementById("authPass");
+
+  // Hide/show app content
   [...main.children].forEach((child) => {
     if (child === authBox) return;
     child.style.display = isLocked ? "none" : "";
   });
 
-  // toggle logout button
-  const logoutBtn = document.getElementById("btnLogout");
-  if (logoutBtn) logoutBtn.style.display = isLocked ? "none" : "inline-block";
+  if (isLocked) {
+    if (loginBtn) loginBtn.style.display = "inline-block";
+    if (createBtn) createBtn.style.display = "inline-block";
+    if (logoutBtn) logoutBtn.style.display = "none";
+    if (emailEl) emailEl.style.display = "block";
+    if (passEl) passEl.style.display = "block";
+  } else {
+    if (loginBtn) loginBtn.style.display = "none";
+    if (createBtn) createBtn.style.display = "none";
+    if (logoutBtn) logoutBtn.style.display = "inline-block";
+    if (emailEl) emailEl.style.display = "none";
+    if (passEl) passEl.style.display = "none";
+  }
 }
 
 ensureAuthUI();
@@ -621,4 +639,5 @@ onAuthStateChanged(window.firebaseAuth, (user) => {
 
   setAppLocked(false);
 });
+
 
