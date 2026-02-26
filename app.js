@@ -1,4 +1,4 @@
-// ---------- FIXED: wireEvents (ONLY ONCE, no nesting) ----------
+
 function wireEvents() {
   $("btnAddMember").onclick = () => {
     const name = $("memberName").value.trim();
@@ -140,3 +140,4 @@ onAuthStateChanged(window.firebaseAuth, (user) => {
 
   setAppLocked(false);
 });
+
