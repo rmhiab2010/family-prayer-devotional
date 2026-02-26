@@ -396,6 +396,7 @@ function escapeHtml(s){
 }
 
 function wireEvents(){
+  function wireEvents(){
   $("btnAddMember").onclick = ()=>{
     const name = $("memberName").value.trim();
     const role = $("memberRole").value.trim();
@@ -626,7 +627,7 @@ ensureAuthUI();
 onAuthStateChanged(window.firebaseAuth, (user) => {
   if (!user) {
     setStorageForUser(null);
-    setAppLocked(true);
+    setAppLocked(true);. 
     return;
   }
 
@@ -647,6 +648,7 @@ onAuthStateChanged(window.firebaseAuth, (user) => {
 
   setAppLocked(false);
 });
+
 
 
 
