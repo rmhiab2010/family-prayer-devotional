@@ -1,7 +1,7 @@
 // ===== Firebase Setup =====
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCzHisihZ0LbXpz82yE-OZKrql76bxar9E",
@@ -48,9 +48,25 @@ function loadState(){
     return defaultState();
   }
 }
-function saveState(){
+async function saveState(){
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   renderAll();
+
+  if (auth.currentUser) {
+    const uid = auth.currentUser.uid;
+
+    try {
+      await setDoc(
+        doc(db, "users", uid, "app", "state"),
+        {
+          state: state,
+          updatedAt: new Date()
+        }
+      );
+    } catch (err) {
+      console.error("Cloud save failed:", err);
+    }
+  }
 }
 
 function defaultState(){
@@ -487,3 +503,4 @@ function renderAll(){
 wireEvents();
 
 renderAll();
+
