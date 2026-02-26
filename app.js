@@ -1,6 +1,12 @@
 // ===== Firebase Setup =====
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import {
+  getAuth,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -19,7 +25,9 @@ const db = getFirestore(firebaseApp);
 window.firebaseAuth = auth;
 window.firebaseDB = db;
 // ===== End Firebase Setup =====
-const STORAGE_KEY = "family_prayer_devotional_v1";
+const STORAGE_KEY_BASE = "family_prayer_devotional_v1";
+let STORAGE_KEY = STORAGE_KEY_BASE;
+let currentUID = null;
 
 const $ = (id) => document.getElementById(id);
 
@@ -499,8 +507,118 @@ function renderAll(){
   renderHistory();
 }
 
-// Init
-wireEvents();
+// ===== Auth UI (Injected) + User-based storage =====
+function ensureAuthUI() {
+  if (document.getElementById("authBox")) return;
 
-renderAll();
+  const wrap = document.createElement("section");
+  wrap.id = "authBox";
+  wrap.className = "card";
+  wrap.style.marginBottom = "14px";
+
+  wrap.innerHTML = `
+    <div class="cardHead">
+      <h2>Sign in</h2>
+      <div class="muted">Login to save your family data per account (Rey / Merlie / etc.).</div>
+    </div>
+
+    <div style="display:grid; gap:10px;">
+      <input id="authEmail" type="email" placeholder="Email" autocomplete="email" />
+      <input id="authPass" type="password" placeholder="Password" autocomplete="current-password" />
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <button id="btnLogin" class="primary">Login</button>
+        <button id="btnCreate">Create Account</button>
+        <button id="btnLogout" style="display:none;">Logout</button>
+      </div>
+      <div id="authMsg" class="muted"></div>
+    </div>
+  `;
+
+  // Put auth box at the top of the main content
+  const main = document.querySelector("main") || document.body;
+  main.prepend(wrap);
+
+  const emailEl = document.getElementById("authEmail");
+  const passEl = document.getElementById("authPass");
+  const msgEl = document.getElementById("authMsg");
+  const loginBtn = document.getElementById("btnLogin");
+  const createBtn = document.getElementById("btnCreate");
+  const logoutBtn = document.getElementById("btnLogout");
+
+  loginBtn.onclick = async () => {
+    msgEl.textContent = "Signing in...";
+    try {
+      await signInWithEmailAndPassword(window.firebaseAuth, emailEl.value.trim(), passEl.value);
+      msgEl.textContent = "Signed in ✅";
+    } catch (e) {
+      msgEl.textContent = "Login failed: " + (e?.message || e);
+    }
+  };
+
+  createBtn.onclick = async () => {
+    msgEl.textContent = "Creating account...";
+    try {
+      await createUserWithEmailAndPassword(window.firebaseAuth, emailEl.value.trim(), passEl.value);
+      msgEl.textContent = "Account created ✅";
+    } catch (e) {
+      msgEl.textContent = "Create failed: " + (e?.message || e);
+    }
+  };
+
+  logoutBtn.onclick = async () => {
+    msgEl.textContent = "Signing out...";
+    try {
+      await signOut(window.firebaseAuth);
+      msgEl.textContent = "Signed out ✅";
+    } catch (e) {
+      msgEl.textContent = "Logout failed: " + (e?.message || e);
+    }
+  };
+}
+
+function setStorageForUser(uid) {
+  currentUID = uid || null;
+  STORAGE_KEY = uid ? `${STORAGE_KEY_BASE}_${uid}` : STORAGE_KEY_BASE;
+}
+
+// Hide/show the app content (so you can require login)
+function setAppLocked(isLocked) {
+  // hide everything except the auth box
+  const authBox = document.getElementById("authBox");
+  const main = document.querySelector("main") || document.body;
+  [...main.children].forEach((child) => {
+    if (child === authBox) return;
+    child.style.display = isLocked ? "none" : "";
+  });
+
+  // toggle logout button
+  const logoutBtn = document.getElementById("btnLogout");
+  if (logoutBtn) logoutBtn.style.display = isLocked ? "none" : "inline-block";
+}
+
+ensureAuthUI();
+
+onAuthStateChanged(window.firebaseAuth, (user) => {
+  if (!user) {
+    setStorageForUser(null);
+    setAppLocked(true);
+    return;
+  }
+
+  // logged in
+  setStorageForUser(user.uid);
+
+  // IMPORTANT:
+  // reload the app state under this user's storage key
+  try {
+    // assumes you already have global `state`, `loadState`, `renderAll`
+    // If your app uses a different variable name, tell me and I’ll adjust.
+    state = loadState();
+    renderAll();
+  } catch (e) {
+    console.log("Post-login reload issue:", e);
+  }
+
+  setAppLocked(false);
+});
 
