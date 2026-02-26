@@ -1,3 +1,24 @@
+// ===== Firebase Setup =====
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCzHisihZ0LbXpz82yE-OZKrql76bxar9E",
+  authDomain: "familyprayerdevotional.firebaseapp.com",
+  projectId: "familyprayerdevotional",
+  storageBucket: "familyprayerdevotional.firebasestorage.app",
+  messagingSenderId: "16786686586",
+  appId: "1:16786686586:web:51dba10f100a475fe6b823"
+};
+
+const firebaseApp = initializeApp(firebaseConfig);
+const auth = getAuth(firebaseApp);
+const db = getFirestore(firebaseApp);
+
+window.firebaseAuth = auth;
+window.firebaseDB = db;
+// ===== End Firebase Setup =====
 const STORAGE_KEY = "family_prayer_devotional_v1";
 
 const $ = (id) => document.getElementById(id);
@@ -464,4 +485,5 @@ function renderAll(){
 
 // Init
 wireEvents();
+
 renderAll();
