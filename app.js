@@ -145,8 +145,12 @@ function renderMembers(){
   const list = $("memberList");
   list.innerHTML = "";
 
-  if(state.members.length === 0){
-    list.innerHTML = `<div class="item"><div class="muted">No members yet. Add your 4 family names above.</div></div>`;
+if(state.members.length === 0){
+  list.innerHTML = `<div class="item"><div class="muted">
+  Start by adding your first family member.
+  </div></div>`;
+  wireEvents();   // ;
+   
     return;
   }
 
@@ -175,6 +179,7 @@ function renderMembers(){
     `;
     list.appendChild(div);
   }
+  
 
   list.querySelectorAll("button[data-act]").forEach(btn=>{
     btn.addEventListener("click", ()=>{
@@ -207,7 +212,7 @@ function renderMembers(){
     });
   });
 }
-
+wireEvents();   /
 function renderDevotionalForm(){
   ensureTodayDev();
   const t = todayISO();
@@ -391,7 +396,7 @@ function escapeHtml(s){
 }
 
 function wireEvents(){
-  $("btnAddMember").addEventListener("click", ()=>{
+  $("btnAddMember").onclick = ()=>{
     const name = $("memberName").value.trim();
     const role = $("memberRole").value.trim();
     if(!name) return alert("Please enter a member name.");
@@ -403,6 +408,7 @@ function wireEvents(){
     $("memberName").value = "";
     $("memberRole").value = "";
     saveState();
+    renderAll()://
   });
 
   $("btnSaveDev").addEventListener("click", ()=>{
@@ -505,6 +511,7 @@ function renderAll(){
   renderMemberChecks();
   renderPrayers();
   renderHistory();
+  wireEvents();//
 }
 
 // ===== Auth UI (Injected) + User-based storage =====
@@ -633,11 +640,13 @@ onAuthStateChanged(window.firebaseAuth, (user) => {
     // If your app uses a different variable name, tell me and I’ll adjust.
     state = loadState();
     renderAll();
+  
   } catch (e) {
     console.log("Post-login reload issue:", e);
   }
 
   setAppLocked(false);
 });
+
 
 
